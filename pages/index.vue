@@ -1,57 +1,35 @@
 <template>
-  <div class="container">
-    <h2>{{ title }}</h2>
-    <div class="search">
-      <div>
-        Search:
-        <v-text-field v-model="wheel" type="number"></v-text-field>
-      </div>
-      Wheels: {{ wheel }}
-      {{ myThings }}
+  <div>
+    <v-app-bar fixed app>
+      <v-app-bar-nav-icon />
+      <v-text-field
+        class="mx-5"
+        outlined
+        dense
+        hide-details
+        placeholder="Search..."
+      ></v-text-field>
+    </v-app-bar>
+    <div class="d-flex my-5 justify-center">
+      <creation-note-card></creation-note-card>
     </div>
-    <div class="category"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import CreationNoteCard from '~/components/note/CreationNoteCard.vue'
 import { exampleStore } from '~/store'
 
 @Component({
-  components: {},
+  name: 'NotePage',
   layout: 'default',
+  components: {
+    CreationNoteCard,
+  },
 })
-export default class MyStore extends Vue {
-  title: string = 'Product List'
-  inventoryData: Array<object> = [
-    {
-      sku: 1,
-      quantity: 0,
-      brand: 'Samsung',
-      type: 'Smartphone',
-      stock: 'Out of Stock',
-    },
-    {
-      sku: 2,
-      quantity: 12,
-      type: 'laptop',
-    },
-  ]
-
-  productList: Array<object> = [
-    {
-      name: 'Samsung Galaxy s10',
-      sku: 1,
-      link: '/phone',
-      image: 'iphone-11.png',
-    },
-    {
-      name: 'Macbook Pro',
-      sku: 2,
-      link: '/laptop',
-      image: 'macbook.png',
-    },
-  ]
+export default class NotePage extends Vue {
+  creationText: string = 'Create note...'
 
   get wheel() {
     return exampleStore.wheels
@@ -75,22 +53,15 @@ export default class MyStore extends Vue {
   }
 }
 </script>
-<style scoped>
-.container {
-  text-align: center;
-}
-
-.category {
+<style lang="scss" scoped>
+.creation-card {
   display: flex;
-  justify-content: center;
-  padding: 50px;
-}
-
-.search {
-  display: flex;
-  flex-flow: column;
-  padding: 20px;
-  justify-content: center;
-  align-items: center;
+  &__text {
+    width: 100%;
+    padding: 0px 5px;
+  }
+  &__text:focus-visible {
+    outline: none;
+  }
 }
 </style>
