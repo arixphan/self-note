@@ -52,11 +52,10 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { User } from '~/store/models/users'
-import { authStore } from '~/store'
 import { RegisterUser } from '~/store/models/auth'
+import { authStore } from '~/store'
 
-type Input = User & { confirmPassword: String }
+type Input = RegisterUser & { confirmPassword: String }
 
 @Component({
   name: 'SignInForm',
@@ -80,6 +79,9 @@ export default class LoginForm extends Vue {
       } as RegisterUser)
       .then(() => {
         this.$router.push({ name: 'login' })
+      })
+      .catch((error) => {
+        this.$notifyError(error.message)
       })
   }
 

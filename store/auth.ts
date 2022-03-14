@@ -10,23 +10,32 @@ import { RegisterUser } from '~/store/models/auth'
 export default class Auth extends VuexModule {
   registerData: RegisterUser[] = []
 
-  // eslint-disable-next-line require-await
-  @Action
+  @Action({ rawError: true })
   async registerUser(user: RegisterUser) {
     try {
       await auth.createUserWithEmailAndPassword(user.email, user.password)
       await this.context.dispatch('login', user)
-      setFireStoreDoc({
+      await setFireStoreDoc({
         ref: StoreDB.collection('users').doc(user.email),
         data: { name: user.name, email: user.email },
       })
-    } catch (error) {
-      return Promise.reject(error)
+      await this.context.dispatch('logout')
+    } catch (error: any) {
+      return Promise.reject(error.message)
     }
   }
 
-  @Action
+  @Action({ rawError: true })
   login({ email, password }: Pick<RegisterUser, 'email' | 'password'>) {
     return auth.signInWithEmailAndPassword(email, password)
+  }
+
+  @Action({ rawError: true })
+  logout() {
+    try {
+      return auth.signOut()
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }

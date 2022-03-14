@@ -9,6 +9,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import SignInForm from '~/components/auth/SignInForm.vue'
 
 @Component({
+  name: 'SigninPage',
   components: {
     SignInForm,
   },

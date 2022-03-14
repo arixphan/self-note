@@ -28,6 +28,7 @@ export default {
     '~/plugins/firebase.js',
     '~/plugins/firebaseUtils.ts',
     '~/plugins/validation.ts',
+    '~/plugins/common.ts',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -37,8 +38,6 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
-    // https://go.nuxtjs.dev/stylelint
-    '@nuxtjs/stylelint-module',
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
   ],

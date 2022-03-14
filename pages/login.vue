@@ -9,6 +9,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import LoginForm from '~/components/auth/LoginForm.vue'
 
 @Component({
+  name: 'LoginPage',
   components: {
     LoginForm,
   },

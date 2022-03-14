@@ -6,7 +6,6 @@ import {
 } from 'vuex-module-decorators'
 
 import { StoreDB } from '~/plugins/firebase'
-// const firebase = firebase.firestore()
 
 interface User {
   name: String
