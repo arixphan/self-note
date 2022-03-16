@@ -1,18 +1,8 @@
-import {
-  Module,
-  VuexModule,
-  Mutation,
-  MutationAction,
-  Action,
-} from 'vuex-module-decorators'
-
-import { StoreDB, Storage, auth } from '~/plugins/firebase'
-
-interface User {
-  name: String
-  email: String
-  id: String
-}
+import { Module, VuexModule, Mutation, MutationAction, Action } from 'vuex-module-decorators';
+import { addFireStoreDoc, getFireStoreRef } from '~/plugins/firebaseUtils';
+import { StoreDB, Storage, auth } from '~/plugins/firebase';
+import { Note } from '~/store/models/note';
+import firebase from 'firebase/compat';
 
 @Module({
   name: 'notes',
@@ -20,49 +10,90 @@ interface User {
   namespaced: true,
 })
 export default class MyModule extends VuexModule {
-  wheels = 2
-  users: User[] = []
+  pinnedNote: Note[] = [];
+  notPinnedNote: Note[] = [];
+
+  get getPinnedNote() {
+    return [...this.pinnedNote];
+  }
+
+  get getNotPinnedNote() {
+    return [...this.notPinnedNote];
+  }
 
   @Mutation
-  change(extra: number) {
-    this.wheels = extra
+  public updatePinnedNotes(notes: Note[]) {
+    this.pinnedNote = [...notes];
   }
 
-  get axles() {
-    return this.wheels / 2
+  @Mutation
+  public updateNotPinnedNotes(notes: Note[]) {
+    this.notPinnedNote = [...notes];
   }
 
-  @MutationAction({ mutate: ['users'] })
-  async fetchUser(): Promise<{ users: User[] }> {
-    const snapshots = await StoreDB.collection('users').get()
-    const users: User[] = []
-    snapshots.forEach((snapshot) => {
-      users.push({ ...(snapshot.data() as User), id: snapshot.id })
-    })
-    console.log('users', users)
-    return { users }
+  @Action({ rawError: true })
+  observePinnedNote() {
+    const ref = getFireStoreRef(['notes']).where('pinned', '==', true).orderBy('_updated', 'desc');
+    ref.onSnapshot((docs: firebase.firestore.DocumentSnapshot[]) => {
+      const pinnedNote: Note[] = [];
+      docs.forEach((doc) => {
+        pinnedNote.push({ ...doc.data(), id: doc.id } as Note);
+      });
+      this.context.commit('updatePinnedNotes', pinnedNote);
+    });
+  }
+
+  @Action({ rawError: true })
+  observeNotPinnedNote() {
+    const ref = getFireStoreRef(['notes']).where('pinned', '==', false).orderBy('_updated', 'desc');
+    ref.onSnapshot((docs: firebase.firestore.DocumentSnapshot[]) => {
+      const pinnedNote: Note[] = [];
+      docs.forEach((doc) => {
+        pinnedNote.push({ ...doc.data(), id: doc.id } as Note);
+      });
+      this.context.commit('updateNotPinnedNotes', pinnedNote);
+    });
   }
 
   @Action({ rawError: true })
   uploadFile(file: File) {
-    const ref = Storage.ref()
-    const currentUserId = auth.currentUser?.email
+    const ref = Storage.ref();
+    const currentUserId = auth.currentUser?.email;
 
-    const fileName = file.name + '_' + new Date().getTime()
-    const fileRef = 'users/' + currentUserId + '/' + fileName
+    const fileName = file.name + '_' + new Date().getTime();
+    const fileRef = 'users/' + currentUserId + '/' + fileName;
 
-    const isUploaded = ref.child(fileRef).put(file)
+    const isUploaded = ref.child(fileRef).put(file);
     return new Promise((resolve, reject) => {
       isUploaded.on(
         'state_changed',
         () => {},
         (error) => {
-          reject(error)
+          reject(error);
         },
         () => {
-          resolve(fileRef)
+          resolve(fileRef);
         }
-      )
-    })
+      );
+    });
+  }
+
+  @Action({ rawError: true })
+  deleteFile(path: string) {
+    const ref = Storage.ref(path);
+    return ref.delete();
+  }
+
+  @Action({ rawError: true })
+  getURl(path: string) {
+    return Storage.ref(path).getDownloadURL();
+  }
+
+  @Action({ rawError: true })
+  createNote(note: Note) {
+    return addFireStoreDoc({
+      ref: getFireStoreRef(['notes']),
+      data: note,
+    });
   }
 }

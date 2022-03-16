@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import SignInForm from '~/components/auth/SignInForm.vue'
+import { Vue, Component } from 'vue-property-decorator';
+import SignInForm from '~/components/auth/SignInForm.vue';
 
 @Component({
   name: 'SigninPage',
@@ -17,11 +17,11 @@ import SignInForm from '~/components/auth/SignInForm.vue'
   head() {
     return {
       title: 'Sign In',
-    }
+    };
   },
 })
 export default class SignUp extends Vue {
-  layout = 'auth'
+  layout = 'auth';
 }
 </script>
 <style scoped>

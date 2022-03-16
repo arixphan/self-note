@@ -1,12 +1,7 @@
 <template>
-  <v-card class="rounded-lg" elevation="5" min-width="600px">
+  <v-card class="rounded-lg" elevation="5">
     <v-card-title>
-      <v-textarea
-        v-model="note.title"
-        rows="1"
-        auto-grow
-        label="Title"
-      ></v-textarea>
+      <v-textarea v-model="note.title" rows="1" auto-grow label="Title"></v-textarea>
       <v-btn icon class="align-self-baseline" @click="togglePin">
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
         <v-icon v-else>mdi-pin-outline</v-icon>
@@ -16,8 +11,8 @@
       <!-- not done list -->
       <div
         v-for="item in notDoneTasks"
-        :key="item.id"
         :id="item.id"
+        :key="item.id"
         class="checklist__item"
         draggable="true"
         @dragstart="onDrag($event, item.id)"
@@ -26,10 +21,7 @@
         <v-btn class="checklist__item__dnd" icon>
           <v-icon>mdi-drag-vertical</v-icon>
         </v-btn>
-        <v-simple-checkbox
-          :value="item.done"
-          @click="onCheckBoxChange(!item.done, item.id)"
-        ></v-simple-checkbox>
+        <v-simple-checkbox :value="item.done" @click="onCheckBoxChange(!item.done, item.id)"></v-simple-checkbox>
         <v-textarea
           :ref="`${item.id}Ref`"
           :value="item.task"
@@ -61,17 +53,15 @@
           @input="addCheckListItem"
         ></v-textarea>
       </div>
-      <v-divider class="mt-10" />
+
+      <v-divider v-if="doneTasks.length > 0" class="my-5" />
 
       <!-- done list -->
       <div v-for="item in doneTasks" :key="item.id" class="checklist__item">
         <v-btn class="checklist__item__dnd" icon>
           <v-icon>mdi-drag-vertical</v-icon>
         </v-btn>
-        <v-simple-checkbox
-          :value="item.done"
-          @click="onCheckBoxChange(!item.done, item.id)"
-        ></v-simple-checkbox>
+        <v-simple-checkbox :value="item.done" @click="onCheckBoxChange(!item.done, item.id)"></v-simple-checkbox>
         <v-textarea
           :ref="`${item.id}Ref`"
           :value="item.task"
@@ -95,68 +85,75 @@
 </template>
 
 <script lang="ts">
-import { nanoid } from 'nanoid'
-import { Vue, Component, Emit } from 'vue-property-decorator'
-import { Note, CheckList } from '~/store/models/note'
+import { nanoid } from 'nanoid';
+import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
+import { Note, CheckList } from '~/store/models/note';
 
 @Component({
   name: 'CheckListCard',
   components: {},
 })
 export default class CheckListCard extends Vue {
-  creationText: string = 'Create note...'
-  isCreating: boolean = false
+  @Prop({ required: false }) initialNote!: Note;
+  creationText: string = 'Create note...';
+  isCreating: boolean = false;
 
-  newTask: string = ''
+  newTask: string = '';
 
-  note: Pick<Note, 'title' | 'checklist' | 'pinned'> = {
-    title: '',
-    checklist: [],
-    pinned: false,
-  }
+  note: Pick<Note, 'title' | 'checklist' | 'pinned'> = this.initialNote
+    ? JSON.parse(JSON.stringify(this.initialNote))
+    : {
+        title: '',
+        checklist: [],
+        pinned: false,
+      };
 
   @Emit('close')
   close() {}
 
+  @Watch('initialNote')
+  initNoteInput(newVal: Note) {
+    if (!newVal) return;
+    this.note = JSON.parse(JSON.stringify(this.initialNote));
+  }
+
   togglePin() {
-    this.note.pinned = !this.note.pinned
+    this.note.pinned = !this.note.pinned;
   }
 
   addCheckListItem(value: string) {
-    if (!value) return
+    if (!value) return;
     const blankItem: CheckList = {
       id: nanoid(),
       done: false,
       task: value,
       order: (this.note?.checklist?.length || 0) + 1,
-    }
+    };
 
-    this.note?.checklist?.push(blankItem)
-    this.newTaskRef.reset()
+    this.note?.checklist?.push(blankItem);
+    this.newTaskRef.reset();
 
     this.$nextTick(() => {
-      ;(
-        this.$refs[`${blankItem.id}Ref`] as Vue & { focus: () => void }[]
-      )[0]?.focus()
-    })
+      (this.$refs[`${blankItem.id}Ref`] as Vue & { focus: () => void }[])[0]?.focus();
+    });
   }
 
   onInputChange(text: string, id: string) {
-    const index = this.note?.checklist?.findIndex((item) => item.id === id)
-    if (index === undefined || index < 0) return
-    this.note?.checklist?.[index]?.task = text
+    const index = this.note?.checklist?.findIndex((item) => item.id === id);
+    if (index === undefined || index < 0) return;
+    this.note!.checklist![index].task = text;
   }
 
   onCheckBoxChange(value: boolean, id: string) {
-    const index = this.note?.checklist?.findIndex((item) => item.id === id)
-    if (index === undefined || index < 0) return
-    this.note?.checklist?.[index]?.done = value
+    const index = this.note?.checklist?.findIndex((item) => item.id === id);
+    if (index === undefined || index < 0) return;
+    this.note!.checklist![index].done = value;
   }
 
   removeTask(id: string) {
-    const index = this.note?.checklist?.findIndex((item) => item.id === id)
-    if (index === undefined || index < 0) return
-    this.note?.checklist.splice(index, 1)
+    const index = this.note?.checklist?.findIndex((item) => item.id === id);
+    if (index === undefined || index < 0) return;
+    this.note!.checklist!.splice(index, 1);
   }
 
   //
@@ -164,16 +161,24 @@ export default class CheckListCard extends Vue {
     // e.dataTransfer.setDragImage(crt, 0, 0)
   }
 
+  getNote(): Note {
+    return {
+      type: 'checklist',
+      ...this.note,
+      checklist: this.note!.checklist!.map((item, i) => ({ ...item, order: i })),
+    };
+  }
+
   get newTaskRef(): Vue & { reset: () => void } {
-    return this.$refs.newTask as Vue & { reset: () => void }
+    return this.$refs.newTask as Vue & { reset: () => void };
   }
 
   get notDoneTasks(): CheckList[] {
-    return this.note?.checklist?.filter((item) => !item.done) || []
+    return this.note?.checklist?.filter((item) => !item.done) || [];
   }
 
   get doneTasks(): CheckList[] {
-    return this.note?.checklist?.filter((item) => !!item.done) || []
+    return this.note?.checklist?.filter((item) => !!item.done) || [];
   }
 }
 </script>

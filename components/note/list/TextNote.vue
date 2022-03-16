@@ -1,18 +1,13 @@
 <template>
   <v-card class="rounded-lg" elevation="5">
-    <v-card-title>
-      <v-textarea v-model="note.title" rows="1" auto-grow label="Title"></v-textarea>
-      <v-btn icon class="align-self-baseline" @click="togglePin">
+    <v-card-text>
+      <v-btn icon class="float-right" @click="togglePin">
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
         <v-icon v-else>mdi-pin-outline</v-icon>
       </v-btn>
-    </v-card-title>
-    <v-card-text>
-      <v-textarea v-model="note.content" filled auto-grow label="Create note"></v-textarea>
+      <h2>{{ note.title }}</h2>
+      <p>{{ note.content }}</p>
     </v-card-text>
-    <v-card-actions class="d-flex justify-end">
-      <v-btn text @click="close"> Close </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -21,14 +16,11 @@ import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
 import { Note } from '~/store/models/note';
 
 @Component({
-  name: 'TextNoteCard',
+  name: 'TextNote',
   components: {},
 })
-export default class TextNoteCard extends Vue {
+export default class TextNote extends Vue {
   @Prop({ required: false }) initialNote!: Note;
-
-  creationText: string = 'Create note...';
-  isCreating: boolean = false;
 
   note: Pick<Note, 'title' | 'content' | 'pinned'> = this.initialNote
     ? { ...this.initialNote }
@@ -49,13 +41,6 @@ export default class TextNoteCard extends Vue {
 
   togglePin() {
     this.note.pinned = !this.note.pinned;
-  }
-
-  getNote(): Note {
-    return {
-      type: 'text',
-      ...this.note,
-    };
   }
 }
 </script>

@@ -2,36 +2,36 @@
   <div>
     <v-app-bar fixed app>
       <v-app-bar-nav-icon />
-      <v-text-field
-        class="mx-5"
-        outlined
-        dense
-        hide-details
-        placeholder="Search..."
-      ></v-text-field>
+      <v-text-field class="mx-5" outlined dense hide-details placeholder="Search..."></v-text-field>
     </v-app-bar>
     <div class="d-flex my-5 justify-center">
       <creation-note-card></creation-note-card>
     </div>
+    <note-list />
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import CreationNoteCard from '~/components/note/CreationNoteCard.vue'
+import { Vue, Component } from 'vue-property-decorator';
+import CreationNoteCard from '~/components/note/CreationNoteCard.vue';
+import NoteList from '~/components/note/list/NoteList.vue';
+
+import { noteStore } from '~/store';
 
 @Component({
   name: 'NotePage',
   layout: 'default',
   components: {
     CreationNoteCard,
+    NoteList,
   },
 })
 export default class NotePage extends Vue {
-  creationText: string = 'Create note...'
+  creationText: string = 'Create note...';
 
-  updated() {
-    console.log('update')
+  created() {
+    noteStore.observePinnedNote();
+    noteStore.observeNotPinnedNote();
   }
 }
 </script>

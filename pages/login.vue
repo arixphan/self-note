@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import LoginForm from '~/components/auth/LoginForm.vue'
+import { Vue, Component } from 'vue-property-decorator';
+import LoginForm from '~/components/auth/LoginForm.vue';
 
 @Component({
   name: 'LoginPage',
@@ -17,11 +17,11 @@ import LoginForm from '~/components/auth/LoginForm.vue'
   head() {
     return {
       title: 'Log In',
-    }
+    };
   },
 })
 export default class MyStore extends Vue {
-  layout = 'auth'
+  layout = 'auth';
 }
 </script>
 <style scoped>
