@@ -17,9 +17,11 @@
       <div
         v-for="item in notDoneTasks"
         :key="item.id"
+        :id="item.id"
         class="checklist__item"
         draggable="true"
-        @drag="onDrap"
+        @dragstart="onDrag($event, item.id)"
+        @dragover.prevent
       >
         <v-btn class="checklist__item__dnd" icon>
           <v-icon>mdi-drag-vertical</v-icon>
@@ -157,8 +159,9 @@ export default class CheckListCard extends Vue {
     this.note?.checklist.splice(index, 1)
   }
 
-  onDrap(event) {
-    console.log(event)
+  //
+  onDrag(e: DragEvent, id: string) {
+    // e.dataTransfer.setDragImage(crt, 0, 0)
   }
 
   get newTaskRef(): Vue & { reset: () => void } {

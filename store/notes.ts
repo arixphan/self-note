@@ -3,9 +3,10 @@ import {
   VuexModule,
   Mutation,
   MutationAction,
+  Action,
 } from 'vuex-module-decorators'
 
-import { StoreDB } from '~/plugins/firebase'
+import { StoreDB, Storage, auth } from '~/plugins/firebase'
 
 interface User {
   name: String
@@ -40,5 +41,28 @@ export default class MyModule extends VuexModule {
     })
     console.log('users', users)
     return { users }
+  }
+
+  @Action({ rawError: true })
+  uploadFile(file: File) {
+    const ref = Storage.ref()
+    const currentUserId = auth.currentUser?.email
+
+    const fileName = file.name + '_' + new Date().getTime()
+    const fileRef = 'users/' + currentUserId + '/' + fileName
+
+    const isUploaded = ref.child(fileRef).put(file)
+    return new Promise((resolve, reject) => {
+      isUploaded.on(
+        'state_changed',
+        () => {},
+        (error) => {
+          reject(error)
+        },
+        () => {
+          resolve(fileRef)
+        }
+      )
+    })
   }
 }

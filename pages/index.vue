@@ -19,7 +19,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import CreationNoteCard from '~/components/note/CreationNoteCard.vue'
-import { exampleStore } from '~/store'
 
 @Component({
   name: 'NotePage',
@@ -30,23 +29,6 @@ import { exampleStore } from '~/store'
 })
 export default class NotePage extends Vue {
   creationText: string = 'Create note...'
-
-  get wheel() {
-    return exampleStore.wheels
-  }
-
-  set wheel(val) {
-    exampleStore.change(+val)
-  }
-
-  get myThings() {
-    console.log(exampleStore)
-    return 'test'
-  }
-
-  created() {
-    exampleStore.fetchUser()
-  }
 
   updated() {
     console.log('update')

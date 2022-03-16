@@ -5,14 +5,14 @@ import Note from '~/store/notes'
 import Auth from '~/store/auth'
 import Notification from '~/store/notification'
 
-let exampleStore: Note
+let noteStore: Note
 let authStore: Auth
 let notificationStore: Notification
 
 function initialiseStores(store: Store<any>): void {
-  exampleStore = getModule(Note, store)
+  noteStore = getModule(Note, store)
   authStore = getModule(Auth, store)
   notificationStore = getModule(Notification, store)
 }
 
-export { initialiseStores, exampleStore, authStore, notificationStore }
+export { initialiseStores, noteStore, authStore, notificationStore }

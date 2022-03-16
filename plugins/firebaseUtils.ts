@@ -2,7 +2,6 @@ import { Plugin } from '@nuxt/types'
 
 import firebase from 'firebase/compat'
 import { StoreDB, auth } from '~/plugins/firebase'
-import { Store } from 'vuex'
 
 type CollectionRef = firebase.firestore.CollectionReference
 type DocumentRef<T = firebase.firestore.DocumentData> =
