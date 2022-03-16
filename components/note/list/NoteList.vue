@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="d-flex flex-wrap">
-    <v-flex v-for="item in notPinnedNotes" :key="item.id">
+  <v-container fluid class="grid-layout">
+    <div v-for="item in notPinnedNotes" :key="item.id" class="grid-item">
       <text-note v-if="item.type === 'text'" class="note-card" :initial-note="item"></text-note>
       <check-list-note v-if="item.type === 'checklist'" class="note-card" :initial-note="item"></check-list-note>
       <image-note v-if="item.type === 'image'" class="note-card" :initial-note="item"></image-note>
-    </v-flex>
+    </div>
   </v-container>
 </template>
 
@@ -39,4 +39,19 @@ export default class NoteList extends Vue {
   width: 220px;
   max-width: 220px;
 }
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
+  // grid-template-columns: auto auto auto;
+
+  grid-gap: 10px;
+  // grid-auto-rows: minmax(180px, auto);
+  grid-auto-flow: dense;
+  padding: 20px;
+}
+
+// .grid-item {
+//   margin: 20px;
+// }
 </style>

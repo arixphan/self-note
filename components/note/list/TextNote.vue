@@ -1,12 +1,12 @@
 <template>
-  <v-card class="rounded-lg" elevation="5">
+  <v-card class="rounded-lg" elevation="5" min-height="100px" max-height="400px">
     <v-card-text>
       <v-btn icon class="float-right" @click="togglePin">
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
         <v-icon v-else>mdi-pin-outline</v-icon>
       </v-btn>
-      <h2>{{ note.title }}</h2>
-      <p>{{ note.content }}</p>
+      <h2 class="title">{{ note.title }}</h2>
+      <p class="content">{{ note.content }}</p>
     </v-card-text>
   </v-card>
 </template>
@@ -44,3 +44,18 @@ export default class TextNote extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+.content {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+}
+</style>

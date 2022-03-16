@@ -1,15 +1,14 @@
 <template>
-  <div>
+  <div class="note-card">
     <component
       :is="currentComponent"
       v-if="isCreating"
       ref="noteForm"
-      class="note-card"
       v-click-outside="onFinishCreation"
       :image-ref="imageRef"
       @close="close"
     ></component>
-    <v-card v-else class="creation-card rounded-lg" elevation="5" min-width="600px">
+    <v-card v-else class="creation-card rounded-lg" elevation="5">
       <input :value="creationText" class="creation-card__text" @focus="toggleIsCreating(true, 'text')" />
       <v-btn large icon @click="toggleIsCreating(true, 'checklist')">
         <v-icon>mdi-checkbox-marked-outline</v-icon>
@@ -119,6 +118,14 @@ export default class CreationNoteCard extends Vue {
 }
 
 .note-card {
-  min-width: 600px;
+  width: 40%;
+}
+
+@media only screen and (max-width: 768px) {
+  .note-card {
+    width: 100%;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
 }
 </style>

@@ -21,7 +21,11 @@
         <v-btn class="checklist__item__dnd" icon>
           <v-icon>mdi-drag-vertical</v-icon>
         </v-btn>
-        <v-simple-checkbox :value="item.done" @click="onCheckBoxChange(!item.done, item.id)"></v-simple-checkbox>
+        <v-simple-checkbox
+          :value="item.done"
+          class="align-self-baseline mt-2"
+          @click="onCheckBoxChange(!item.done, item.id)"
+        ></v-simple-checkbox>
         <v-textarea
           :ref="`${item.id}Ref`"
           :value="item.task"

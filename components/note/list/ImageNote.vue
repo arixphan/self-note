@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg" elevation="5">
+  <v-card class="rounded-lg" elevation="5" min-height="100px" max-height="400px">
     <div v-if="url" class="position-relative">
       <v-btn fab dark x-small class="pin-btn" @click="togglePin">
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
@@ -14,8 +14,8 @@
       </v-img>
     </div>
     <v-card-text v-if="note.title || note.content">
-      <h2>{{ note.title }}</h2>
-      <p>{{ note.content }}</p>
+      <h2 class="title">{{ note.title }}</h2>
+      <p class="content">{{ note.content }}</p>
     </v-card-text>
   </v-card>
 </template>
@@ -78,5 +78,17 @@ export default class ImageNote extends Vue {
   z-index: 1;
   top: 5px;
   right: 5px;
+}
+.title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+.content {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
 }
 </style>
