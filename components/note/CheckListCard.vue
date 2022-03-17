@@ -36,6 +36,7 @@
           hide-details
           solo
           @input="onInputChange($event, item.id)"
+          @keydown.enter="focusNew"
         ></v-textarea>
         <v-btn icon @click="removeTask(item.id)">
           <v-icon>mdi-close</v-icon>
@@ -54,6 +55,7 @@
           hide-details
           placeholder="Check list"
           solo
+          @keyup.prevent
           @input="addCheckListItem"
         ></v-textarea>
       </div>
@@ -126,7 +128,12 @@ export default class CheckListCard extends Vue {
   }
 
   addCheckListItem(value: string) {
-    if (!value) return;
+    if (!`${value || ''}`) return;
+
+    if (!`${value || ''}`.trim().replace(/\r?\n|\r/g, '')) {
+      this.newTaskRef.clearableCallback();
+      return;
+    }
     const blankItem: CheckList = {
       id: nanoid(),
       done: false,
@@ -160,7 +167,10 @@ export default class CheckListCard extends Vue {
     this.note!.checklist!.splice(index, 1);
   }
 
-  //
+  focusNew() {
+    this.newTaskRef!.focus();
+  }
+
   onDrag(e: DragEvent, id: string) {
     // e.dataTransfer.setDragImage(crt, 0, 0)
   }
@@ -173,8 +183,8 @@ export default class CheckListCard extends Vue {
     };
   }
 
-  get newTaskRef(): Vue & { reset: () => void } {
-    return this.$refs.newTask as Vue & { reset: () => void };
+  get newTaskRef(): Vue & { reset: () => void; focus: () => void; clearableCallback: () => void } {
+    return this.$refs.newTask as Vue & { reset: () => void; focus: () => void; clearableCallback: () => void };
   }
 
   get notDoneTasks(): CheckList[] {

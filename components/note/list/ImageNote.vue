@@ -5,7 +5,7 @@
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
         <v-icon v-else>mdi-pin-outline</v-icon>
       </v-btn>
-      <v-img :src="url" :class="imageClasses" max-width="600" max-height="800">
+      <v-img v-if="note.imagePath && url" :src="url" :class="imageClasses" max-width="600" max-height="800">
         <template #placeholder>
           <v-row class="fill-height ma-0" align="center" justify="center">
             <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>

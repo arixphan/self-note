@@ -11,6 +11,7 @@
       <v-textarea v-model="note.content" filled auto-grow label="Create note"></v-textarea>
     </v-card-text>
     <v-card-actions class="d-flex justify-end">
+      <v-btn v-id="initialNote" text @click="handleDelete">Remove</v-btn>
       <v-btn text @click="close"> Close </v-btn>
     </v-card-actions>
   </v-card>
@@ -19,6 +20,7 @@
 <script lang="ts">
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
 import { Note } from '~/store/models/note';
+import { noteStore } from '~/store';
 
 @Component({
   name: 'TextNoteCard',
@@ -56,6 +58,11 @@ export default class TextNoteCard extends Vue {
       type: 'text',
       ...this.note,
     };
+  }
+
+  handleDelete() {
+    noteStore.deleteNote(this.initialNote);
+    this.close();
   }
 }
 </script>

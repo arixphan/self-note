@@ -11,6 +11,11 @@ interface AddingFireStore<T> {
   data: T;
 }
 
+interface UpdatedFireStore<T> {
+  ref: DocumentRef;
+  data: T;
+}
+
 interface SetFireStore<T> {
   ref: DocumentRef;
   data: T;
@@ -21,6 +26,7 @@ declare module 'vue/types/vue' {
     $addFireStoreDoc<T>({ ref, data }: AddingFireStore<T>): Promise<DocumentRef<T>>;
     $getFireStoreRef(refs: string[]): DocumentRef;
     $setFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
+    $updateFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
   }
 }
 
@@ -29,12 +35,14 @@ declare module '@nuxt/types' {
     $addFireStoreDoc<T>({ ref, data }: AddingFireStore<T>): Promise<DocumentRef<T>>;
     $getFireStoreRef(refs: string[]): DocumentRef;
     $setFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
+    $updateFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
   }
 
   interface Context {
     $addFireStoreDoc<T>({ ref, data }: AddingFireStore<T>): Promise<DocumentRef<T>>;
     $getFireStoreRef(refs: string[]): DocumentRef;
     $setFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
+    $updateFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
   }
 }
 
@@ -45,6 +53,7 @@ declare module 'vuex/types/index' {
     $addFireStoreDoc<T>({ ref, data }: AddingFireStore<T>): Promise<DocumentRef<T>>;
     $getFireStoreRef(refs: string[]): DocumentRef;
     $setFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
+    $updateFireStoreDoc<T>(params: SetFireStore<T>): Promise<void>;
   }
 }
 
@@ -86,16 +95,33 @@ const setFireStoreDoc = function <T = firebase.firestore.DocumentData>({ ref, da
   return ref.set(creationData);
 };
 
+const updateFireStoreDoc = function <T = firebase.firestore.DocumentData>({
+  ref,
+  data,
+}: UpdatedFireStore<T>): Promise<void> {
+  const updatedData = {
+    ...data,
+    _updated: firebase.firestore.Timestamp.now(),
+  };
+  return ref.update(updatedData) as Promise<void>;
+};
+
+const deleteFireStoreDoc = function (ref: DocumentRef): Promise<void> {
+  return ref.delete() as Promise<void>;
+};
+
 const firestoreUtils: Plugin = (context, inject) => {
   context.$addFireStoreDoc = addFireStoreDoc;
   context.$getFireStoreRef = getFireStoreRef;
   context.$setFireStoreDoc = setFireStoreDoc;
+  context.$updateFireStoreDoc = updateFireStoreDoc;
 
   inject('addFireStoreDoc', addFireStoreDoc);
   inject('getFireStoreRef', getFireStoreRef);
   inject('setFireStoreDoc', setFireStoreDoc);
+  inject('updateFireStoreDoc', updateFireStoreDoc);
 };
 
-export { getFireStoreRef, addFireStoreDoc, setFireStoreDoc };
+export { getFireStoreRef, addFireStoreDoc, setFireStoreDoc, updateFireStoreDoc, deleteFireStoreDoc };
 
 export default firestoreUtils;

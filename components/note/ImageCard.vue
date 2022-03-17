@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg" elevation="5" min-width="600px">
+  <v-card class="rounded-lg" elevation="5">
     <v-card-text>
       <div v-if="url" class="position-relative">
         <v-btn fab dark x-small class="pin-btn" @click="togglePin">
@@ -22,7 +22,7 @@
       <v-textarea v-model="note.content" filled auto-grow label="Create note"></v-textarea>
     </v-card-text>
     <v-card-actions class="d-flex justify-end">
-      <v-btn text @click="deleteImage"> Close </v-btn>
+      <v-btn text @click="handleClose"> Close </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -76,8 +76,20 @@ export default class ImageCard extends Vue {
     this.note.imagePath && this.getURL(this.note.imagePath);
   }
 
-  deleteImage() {
-    noteStore.deleteFile(this.imageRef).then(() => {
+  handleClose() {
+    if (this.initialNote) {
+      this.close();
+    }
+    this.deleteImage();
+  }
+
+  async deleteImage() {
+    const ref = this.note.imagePath || this.imageRef;
+    const filename = `${ref}`.split('/').pop();
+    if (!filename) return;
+
+    await noteStore.deleteFile(filename).then(() => {
+      this.note.imagePath = '';
       this.close();
     });
   }
@@ -90,8 +102,14 @@ export default class ImageCard extends Vue {
     return {
       ...this.note,
       type: 'image',
-      imagePath: this.imageRef,
+      imagePath: this.note.imagePath !== undefined ? this.note.imagePath : this.imageRef,
     };
+  }
+
+  created() {
+    if (this.initialNote?.imagePath) {
+      this.getURL(this.initialNote?.imagePath);
+    }
   }
 }
 </script>

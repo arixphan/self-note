@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, MutationAction, Action } from 'vuex-module-decorators';
-import { addFireStoreDoc, getFireStoreRef } from '~/plugins/firebaseUtils';
+import { addFireStoreDoc, getFireStoreRef, updateFireStoreDoc, deleteFireStoreDoc } from '~/plugins/firebaseUtils';
 import { StoreDB, Storage, auth } from '~/plugins/firebase';
 import { Note } from '~/store/models/note';
 import firebase from 'firebase/compat';
@@ -9,7 +9,7 @@ import firebase from 'firebase/compat';
   stateFactory: true,
   namespaced: true,
 })
-export default class MyModule extends VuexModule {
+export default class NoteStore extends VuexModule {
   pinnedNote: Note[] = [];
   notPinnedNote: Note[] = [];
 
@@ -79,9 +79,12 @@ export default class MyModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  deleteFile(path: string) {
+  deleteFile(filename: string) {
+    const currentUserId = auth.currentUser?.email;
+
+    const path = 'users/' + currentUserId;
     const ref = Storage.ref(path);
-    return ref.delete();
+    return ref.child(filename).delete();
   }
 
   @Action({ rawError: true })
@@ -95,5 +98,18 @@ export default class MyModule extends VuexModule {
       ref: getFireStoreRef(['notes']),
       data: note,
     });
+  }
+
+  @Action({ rawError: true })
+  updateNote(note: Note) {
+    return updateFireStoreDoc({
+      ref: getFireStoreRef(['notes', <string>note.id]),
+      data: note,
+    });
+  }
+
+  @Action({ rawError: true })
+  deleteNote(note: Note) {
+    return deleteFireStoreDoc(getFireStoreRef(['notes', <string>note.id]));
   }
 }
