@@ -22,6 +22,7 @@
       <v-textarea v-model="note.content" filled auto-grow label="Create note"></v-textarea>
     </v-card-text>
     <v-card-actions class="d-flex justify-end">
+      <v-btn v-if="initialNote" text @click="handleDelete">Remove</v-btn>
       <v-btn text @click="handleClose"> Close </v-btn>
     </v-card-actions>
   </v-card>
@@ -42,6 +43,7 @@ export default class ImageCard extends Vue {
 
   creationText: string = 'Create note...';
   isCreating: boolean = false;
+  isLoading: boolean = false;
   url: string = '';
 
   note: Note = this.initialNote
@@ -50,22 +52,36 @@ export default class ImageCard extends Vue {
         title: '',
         content: '',
         pinned: false,
+        imagePath: '',
       };
 
   @Emit('close')
   close() {}
+
+  @Emit('update:note')
+  update() {}
 
   @Watch('imageRef', {
     immediate: true,
   })
   watchImageRef(path: string) {
     if (!path) return;
+    this.note.imagePath = path;
     this.getURL(path);
   }
 
+  @Watch('note.imagePath', {
+    immediate: true,
+  })
   getURL(path: string) {
+    if (!path) {
+      this.url = '';
+      return;
+    }
+    this.isLoading = true;
     noteStore.getURl(path).then((url) => {
       this.url = url;
+      this.isLoading = false;
     });
   }
 
@@ -73,14 +89,15 @@ export default class ImageCard extends Vue {
   initNoteInput(newVal: Note) {
     if (!newVal) return;
     this.note = { ...this.initialNote };
-    this.note.imagePath && this.getURL(this.note.imagePath);
   }
 
-  handleClose() {
+  async handleClose() {
     if (this.initialNote) {
-      this.close();
+      await this.update();
+    } else {
+      await this.deleteImage();
     }
-    this.deleteImage();
+    this.close();
   }
 
   async deleteImage() {
@@ -88,10 +105,17 @@ export default class ImageCard extends Vue {
     const filename = `${ref}`.split('/').pop();
     if (!filename) return;
 
-    await noteStore.deleteFile(filename).then(() => {
+    try {
+      await noteStore.deleteFile(filename);
       this.note.imagePath = '';
-      this.close();
-    });
+      if (this.initialNote) {
+        this.update();
+      }
+    } catch (err: unknown) {
+      alert(err);
+    }
+
+    this.close();
   }
 
   togglePin() {
@@ -106,11 +130,27 @@ export default class ImageCard extends Vue {
     };
   }
 
-  created() {
-    if (this.initialNote?.imagePath) {
-      this.getURL(this.initialNote?.imagePath);
-    }
+  handleDelete() {
+    const filename = `${this.note.imagePath}`.split('/').pop();
+    noteStore
+      .deleteNote(this.initialNote)
+      .then(() => {
+        if (filename) {
+          noteStore.deleteFile(filename).then(() => {
+            this.note.imagePath = '';
+          });
+        }
+      })
+      .finally(() => {
+        this.close();
+      });
   }
+
+  // created() {
+  //   if (this.initialNote?.imagePath) {
+  //     this.getURL(this.initialNote?.imagePath);
+  //   }
+  // }
 }
 </script>
 <style lang="scss" scoped>

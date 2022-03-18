@@ -10,9 +10,10 @@
         :is="currentComponent"
         v-if="dialog"
         ref="noteForm"
-        v-click-outside="onUpdate"
+        v-click-outside="handleUpdateNote"
         :initial-note="editedNote"
-        @close="onUpdate"
+        @update:note="handleUpdateNote"
+        @close="close"
       ></component>
     </v-dialog>
   </v-container>
@@ -68,7 +69,7 @@ export default class NoteList extends Vue {
   }
 
   get noteForm() {
-    return this.$refs.noteForm as Vue & { getNote: () => Note };
+    return;
   }
 
   toggleEditing(value: boolean, type: CreationType): void {
@@ -81,8 +82,9 @@ export default class NoteList extends Vue {
     this.toggleEditing(true, item.type);
   }
 
-  onUpdate() {
-    noteStore.updateNote({ ...this.editedNote, ...this.noteForm.getNote() });
+  handleUpdateNote() {
+    const ref = this.$refs.noteForm as Vue & { getNote: () => Note };
+    noteStore.updateNote({ ...this.editedNote, ...ref.getNote() });
     this.close();
   }
 

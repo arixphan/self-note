@@ -11,8 +11,8 @@
       <v-textarea v-model="note.content" filled auto-grow label="Create note"></v-textarea>
     </v-card-text>
     <v-card-actions class="d-flex justify-end">
-      <v-btn v-id="initialNote" text @click="handleDelete">Remove</v-btn>
-      <v-btn text @click="close"> Close </v-btn>
+      <v-btn v-if="initialNote" text @click="handleDelete">Remove</v-btn>
+      <v-btn text @click="handleClose"> Close </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -48,6 +48,16 @@ export default class TextNoteCard extends Vue {
 
   @Emit('close')
   close() {}
+
+  @Emit('update:note')
+  update() {}
+
+  async handleClose() {
+    if (this.initialNote) {
+      await this.update();
+    }
+    this.close();
+  }
 
   togglePin() {
     this.note.pinned = !this.note.pinned;

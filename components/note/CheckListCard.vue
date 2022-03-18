@@ -85,7 +85,8 @@
       </div>
     </v-card-text>
     <v-card-actions class="d-flex justify-end">
-      <v-btn text @click="close"> Close </v-btn>
+      <v-btn v-if="initialNote" text @click="handleDelete">Remove</v-btn>
+      <v-btn text @click="handleClose"> Close </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -94,6 +95,7 @@
 import { nanoid } from 'nanoid';
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
 import { Note, CheckList } from '~/store/models/note';
+import { noteStore } from '~/store';
 
 @Component({
   name: 'CheckListCard',
@@ -117,6 +119,9 @@ export default class CheckListCard extends Vue {
   @Emit('close')
   close() {}
 
+  @Emit('update:note')
+  update() {}
+
   @Watch('initialNote')
   initNoteInput(newVal: Note) {
     if (!newVal) return;
@@ -125,6 +130,18 @@ export default class CheckListCard extends Vue {
 
   togglePin() {
     this.note.pinned = !this.note.pinned;
+  }
+
+  async handleClose() {
+    if (this.initialNote) {
+      await this.update();
+    }
+    this.close();
+  }
+
+  handleDelete() {
+    noteStore.deleteNote(this.initialNote);
+    this.close();
   }
 
   addCheckListItem(value: string) {

@@ -29,14 +29,11 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  // firebase.auth().
   // if (location.hostname === 'localhost') {
-  //   firebase.firestore().useEmulator('localhost', 8080)
-  //   firebase.storage().useEmulator('localhost', 9199)
-  //   firebase.functions().useEmulator('localhost', 5001)
-  //   firebase
-  //     .auth()
-  //     .useEmulator('http://localhost:9099', { disableWarnings: true })
+  //   firebase.firestore().useEmulator('localhost', 8080);
+  //   firebase.storage().useEmulator('localhost', 9199);
+  //   firebase.functions().useEmulator('localhost', 5001);
+  //   firebase.auth().useEmulator('http://localhost:9099', { disableWarnings: true });
   // }
 }
 

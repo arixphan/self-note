@@ -17,6 +17,9 @@
     </v-card>
 
     <input ref="file" class="d-none" type="file" accept="image/*" @change="onFileChange" />
+    <v-overlay :value="isUploading">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </v-overlay>
   </div>
 </template>
 
@@ -42,6 +45,7 @@ type CreationType = 'text' | 'checklist' | 'image' | null;
 export default class CreationNoteCard extends Vue {
   creationText: string = 'Create note...';
   isCreating: boolean = false;
+  isUploading: boolean = false;
   creationType: CreationType = null;
   imageRef: string = '';
 
@@ -94,9 +98,11 @@ export default class CreationNoteCard extends Vue {
     const uploadedFile = (file.target as EventTarget & { files: FileList }).files[0];
 
     if (!uploadedFile) return;
+    this.isUploading = true;
     noteStore.uploadFile(uploadedFile).then((ref) => {
       this.imageRef = ref as string;
       this.toggleIsCreating(true, 'image');
+      this.isUploading = false;
     });
   }
 
