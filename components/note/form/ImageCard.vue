@@ -1,8 +1,8 @@
 <template>
-  <v-card class="rounded-lg" elevation="5">
+  <v-card class="image-card rounded-lg" elevation="5">
     <v-card-text>
-      <div v-if="url" class="position-relative">
-        <v-btn fab dark x-small class="pin-btn" @click="togglePin">
+      <div v-if="url" class="image-card__image">
+        <v-btn fab dark x-small class="image-card__image__btn image-card__image__btn--pin" @click="togglePin">
           <v-icon v-if="note.pinned">mdi-pin</v-icon>
           <v-icon v-else>mdi-pin-outline</v-icon>
         </v-btn>
@@ -13,7 +13,7 @@
             </v-row>
           </template>
         </v-img>
-        <v-btn fab dark x-small class="delete-btn" @click="deleteImage">
+        <v-btn fab dark x-small class="image-card__image__btn image-card__image__btn--trash" @click="deleteImage">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </div>
@@ -145,28 +145,27 @@ export default class ImageCard extends Vue {
         this.close();
       });
   }
-
-  // created() {
-  //   if (this.initialNote?.imagePath) {
-  //     this.getURL(this.initialNote?.imagePath);
-  //   }
-  // }
 }
 </script>
 <style lang="scss" scoped>
-.position-relative {
-  position: relative;
-}
-.pin-btn {
-  position: absolute;
-  z-index: 1;
-  top: 5px;
-  right: 5px;
-}
-.delete-btn {
-  position: absolute;
-  z-index: 1;
-  right: 5px;
-  bottom: 5px;
+.image-card {
+  &__image {
+    position: relative;
+
+    &__btn {
+      position: absolute;
+      z-index: 1;
+
+      &--pin {
+        top: 5px;
+        right: 5px;
+      }
+
+      &--trash {
+        right: 5px;
+        bottom: 5px;
+      }
+    }
+  }
 }
 </style>

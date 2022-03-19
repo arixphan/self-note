@@ -1,9 +1,9 @@
-import { Module, VuexModule, Mutation } from 'vuex-module-decorators'
+import { Module, VuexModule, Mutation } from 'vuex-module-decorators';
 
 interface NotificationConfig {
-  isShow: boolean
-  text: String
-  color: String
+  isShow: boolean;
+  text: String;
+  color: String;
 }
 
 @Module({
@@ -11,19 +11,19 @@ interface NotificationConfig {
   stateFactory: true,
   namespaced: true,
 })
-export default class MyModule extends VuexModule {
+export default class Notification extends VuexModule {
   config: NotificationConfig = {
     isShow: false,
     text: '',
     color: '#68cd86',
-  }
+  };
 
   @Mutation
   mutateNotification(config: NotificationConfig) {
-    this.config = config
+    this.config = config;
   }
 
   get notificationConfig() {
-    return this.config
+    return this.config;
   }
 }

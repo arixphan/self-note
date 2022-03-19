@@ -1,5 +1,5 @@
 <template>
-  <div class="note-card">
+  <div class="note-bar">
     <component
       :is="currentComponent"
       v-if="isCreating"
@@ -8,8 +8,8 @@
       :image-ref="imageRef"
       @close="close"
     ></component>
-    <v-card v-else class="creation-card rounded-lg" elevation="5">
-      <input :value="creationText" class="creation-card__text" @focus="toggleIsCreating(true, 'text')" />
+    <v-card v-else class="note-bar__card rounded-lg" elevation="5">
+      <input :value="creationText" class="note-bar__card__text" @focus="toggleIsCreating(true, 'text')" />
       <v-btn large icon @click="toggleIsCreating(true, 'checklist')">
         <v-icon>mdi-checkbox-marked-outline</v-icon>
       </v-btn>
@@ -25,9 +25,9 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import TextNoteCard from '~/components/note/TextNoteCard.vue';
-import CheckListCard from '~/components/note/CheckListCard.vue';
-import ImageCard from '~/components/note/ImageCard.vue';
+import TextNoteCard from '~/components/note/form/TextNoteCard.vue';
+import CheckListCard from '~/components/note/form/CheckListCard.vue';
+import ImageCard from '~/components/note/form/ImageCard.vue';
 import { Note } from '~/store/models/note';
 
 import { noteStore } from '~/store';
@@ -112,19 +112,18 @@ export default class CreationNoteCard extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.creation-card {
-  display: flex;
-  &__text {
-    width: 100%;
-    padding: 0px 5px;
-  }
-  &__text:focus-visible {
-    outline: none;
-  }
-}
-
-.note-card {
+.note-bar {
   width: 40%;
+  &__card {
+    display: flex;
+    &__text {
+      width: 100%;
+      padding: 0px 5px;
+    }
+    &__text:focus-visible {
+      outline: none;
+    }
+  }
 }
 
 @media only screen and (max-width: 768px) {

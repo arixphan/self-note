@@ -1,7 +1,14 @@
 <template>
-  <v-card class="rounded-lg" elevation="5" min-height="100px" max-height="400px">
-    <div v-if="url" class="position-relative">
-      <v-btn fab dark x-small class="pin-btn" @click="togglePin">
+  <v-card class="image-note rounded-lg" elevation="5" min-height="100px" max-height="400px">
+    <div v-if="url" class="image-note__image">
+      <v-btn
+        fab
+        dark
+        x-small
+        class="image-note__image__btn image-note__image__btn--pin"
+        @click.stop
+        @click="togglePinned"
+      >
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
         <v-icon v-else>mdi-pin-outline</v-icon>
       </v-btn>
@@ -14,14 +21,14 @@
       </v-img>
     </div>
     <v-card-text v-if="note.title || note.content">
-      <h2 class="title">{{ note.title }}</h2>
-      <p class="content">{{ note.content }}</p>
+      <h2 class="image-note__title">{{ note.title }}</h2>
+      <p class="image-note__content">{{ note.content }}</p>
     </v-card-text>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator';
 import { Note } from '~/store/models/note';
 import { noteStore } from '~/store';
 
@@ -52,6 +59,11 @@ export default class ImageNote extends Vue {
     this.note = { ...this.initialNote };
   }
 
+  /**
+   * when imagePath change, get image url
+   *
+   * @returns {void}
+   */
   @Watch('note.imagePath')
   getURL(path: string) {
     if (!path) return;
@@ -60,8 +72,14 @@ export default class ImageNote extends Vue {
     });
   }
 
-  togglePin() {
-    this.note.pinned = !this.note.pinned;
+  /**
+   * handle update pinned value by emit toggle-pinned of wrapper component
+   *
+   * @returns {id: string, pinned: string} - id: note's id; pinned: pinned value
+   */
+  @Emit('toggle-pinned')
+  togglePinned() {
+    return { id: this.note.id, pinned: !this.note.pinned };
   }
 
   created() {
@@ -70,25 +88,31 @@ export default class ImageNote extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.position-relative {
-  position: relative;
-}
-.pin-btn {
-  position: absolute;
-  z-index: 1;
-  top: 5px;
-  right: 5px;
-}
-.title {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-}
-.content {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: 10;
-  -webkit-box-orient: vertical;
+.image-note {
+  &__image {
+    position: relative;
+    &__btn {
+      position: absolute;
+      z-index: 1;
+      &--pin {
+        top: 5px;
+        right: 5px;
+      }
+    }
+  }
+
+  &__title {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+  }
+
+  &__content {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+  }
 }
 </style>

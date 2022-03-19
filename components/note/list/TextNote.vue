@@ -1,7 +1,7 @@
 <template>
   <v-card class="rounded-lg" elevation="5" min-height="100px" max-height="400px">
     <v-card-text>
-      <v-btn icon class="float-right" @click="togglePin">
+      <v-btn fab dark x-small class="float-right" @click.stop @click="togglePinned">
         <v-icon v-if="note.pinned">mdi-pin</v-icon>
         <v-icon v-else>mdi-pin-outline</v-icon>
       </v-btn>
@@ -22,7 +22,7 @@ import { Note } from '~/store/models/note';
 export default class TextNote extends Vue {
   @Prop({ required: false }) initialNote!: Note;
 
-  note: Pick<Note, 'title' | 'content' | 'pinned'> = this.initialNote
+  note: Pick<Note, 'title' | 'content' | 'pinned' | 'id'> = this.initialNote
     ? { ...this.initialNote }
     : {
         title: '',
@@ -39,8 +39,14 @@ export default class TextNote extends Vue {
   @Emit('close')
   close() {}
 
-  togglePin() {
-    this.note.pinned = !this.note.pinned;
+  /**
+   * handle update pinned value by emit toggle-pinned of wrapper component
+   *
+   * @returns {id: string, pinned: string} - id: note's id; pinned: pinned value
+   */
+  @Emit('toggle-pinned')
+  togglePinned() {
+    return { id: this.note.id, pinned: !this.note.pinned };
   }
 }
 </script>

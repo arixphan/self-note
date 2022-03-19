@@ -9,15 +9,7 @@
     </v-card-title>
     <v-card-text>
       <!-- not done list -->
-      <div
-        v-for="item in notDoneTasks"
-        :id="item.id"
-        :key="item.id"
-        class="checklist__item"
-        draggable="true"
-        @dragstart="onDrag($event, item.id)"
-        @dragover.prevent
-      >
+      <div v-for="item in notDoneTasks" :id="item.id" :key="item.id" class="checklist__item">
         <v-btn class="checklist__item__dnd" icon>
           <v-icon>mdi-drag-vertical</v-icon>
         </v-btn>

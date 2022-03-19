@@ -57,6 +57,12 @@ declare module 'vuex/types/index' {
   }
 }
 
+/**
+ * get firestore reference
+ *
+ * @param  {String[]} collections - array of document/collection reference
+ * @returns firestore reference
+ */
 const getFireStoreRef = function (collections: string[]) {
   const currentUserId = auth.currentUser?.email;
   if (!currentUserId) return;
@@ -74,6 +80,12 @@ const getFireStoreRef = function (collections: string[]) {
   return ref;
 };
 
+/**
+ * add firestore document
+ *
+ * @param  {CollectionReference} ref - collection reference
+ * @returns {Promise<DocumentRef<T>>}
+ */
 const addFireStoreDoc = function <T = firebase.firestore.DocumentData>({
   ref,
   data,
@@ -86,6 +98,12 @@ const addFireStoreDoc = function <T = firebase.firestore.DocumentData>({
   return ref.add(creationData) as Promise<DocumentRef<T>>;
 };
 
+/**
+ * set firestore document
+ *
+ * @param  {CollectionReference} ref - collection reference
+ * @returns {Promise<void>}
+ */
 const setFireStoreDoc = function <T = firebase.firestore.DocumentData>({ ref, data }: SetFireStore<T>): Promise<void> {
   const creationData = {
     ...data,
@@ -95,6 +113,12 @@ const setFireStoreDoc = function <T = firebase.firestore.DocumentData>({ ref, da
   return ref.set(creationData);
 };
 
+/**
+ * update firestore document
+ *
+ * @param  {CollectionReference} ref - collection reference
+ * @returns {Promise<void>}
+ */
 const updateFireStoreDoc = function <T = firebase.firestore.DocumentData>({
   ref,
   data,
@@ -106,6 +130,12 @@ const updateFireStoreDoc = function <T = firebase.firestore.DocumentData>({
   return ref.update(updatedData) as Promise<void>;
 };
 
+/**
+ * delete firestore document
+ *
+ * @param  {CollectionReference} ref - collection reference
+ * @returns {Promise<void>}
+ */
 const deleteFireStoreDoc = function (ref: DocumentRef): Promise<void> {
   return ref.delete() as Promise<void>;
 };
