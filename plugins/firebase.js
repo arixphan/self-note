@@ -6,7 +6,7 @@ import 'firebase/compat/storage';
 import 'firebase/compat/functions';
 
 // Your web app's Firebase configuration
-// testing firebase config
+// testing firebase config, i will delete this firebase cloud later
 const firebaseConfig = {
   apiKey: 'AIzaSyCIQIRcFm0dcZ6SQGEr0Jc1woA63fJY2S4',
   authDomain: 'self-note-e247e.firebaseapp.com',
